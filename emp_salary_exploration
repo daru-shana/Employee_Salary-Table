@@ -1,0 +1,78 @@
+use employer
+
+
+select *  from  emp
+
+
+--persom with Highest salary
+
+
+select top 1 employee, salary from emp 
+order by salary desc;
+
+
+------------
+select count(employee) from emp;
+-----------
+
+
+
+
+
+
+-- find the 2nd highest salary holder 
+select employee, salary, rank() over(order by salary desc) as ranking 
+from emp
+-----------
+
+
+select * 
+from (select employee, salary, rank() over(order by salary desc) as ranking from emp) as rk
+where rk.ranking = 2
+
+
+
+
+
+
+
+-- find the second higest salary from each of the department
+select *  from  emp;
+
+
+select employee, dept, salary , rank() over(partition by dept order by salary desc) as ranking from emp
+
+
+select * from (select employee, dept, salary , rank() over(partition by dept order by salary desc) as ranking from emp) as rk
+where rk.ranking = 2
+order by dept
+
+
+
+
+
+
+-- count of employees in each dept
+select dept,count(dept) from emp 
+group by dept 
+
+
+
+
+
+
+
+-- sum of salaries in each dept
+select dept, sum(salary) as sum_of_salary_in_each_dept from emp
+group by dept
+
+
+select a.dept, a.sum_of_salary_in_each_dept , rank() over(order by a.sum_of_salary_in_each_dept desc) as ranking 
+from (select dept, sum(salary) as sum_of_salary_in_each_dept from emp
+group by dept) a
+
+
+select* from (select a.dept, a.sum_of_salary_in_each_dept , rank() over(order by a.sum_of_salary_in_each_dept desc) as ranking 
+from (select dept, sum(salary) as sum_of_salary_in_each_dept from emp
+group by dept) a) as b
+where b.ranking = 2
